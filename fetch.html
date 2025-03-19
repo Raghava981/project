@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Github</title>
+    <style>
+        #parent img {
+            width: 250px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="input" placeholder="Enter GitHub Username">
+    <button onclick="fetchData()">CLICK</button>
+    <div id="parent"></div>
+
+    <script>
+        function fetchData() {
+            var input = document.getElementById("input").value.trim();
+            if (!input) {
+                alert("Please enter a GitHub username");
+                return;
+            }
+
+            var url = `https://api.github.com/users/${input}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Not Found") {
+                        alert("User not found!");
+                        return;
+                    }
+
+                    var parent = document.getElementById("parent");
+                    parent.innerHTML = ""; // Clear previous data
+
+                    var div = document.createElement("div");
+                    div.innerHTML = `
+                        <img src="${data.avatar_url}" alt="Profile Image"/>  
+                        <h1>Name: ${data.login}</h1>  
+                        <h3>ID: ${data.id}</h3>  
+                        <p>Bio: ${data.bio || "No bio available"}</p>  
+                        <p>Followers: ${data.followers}</p>  
+                        <p>Following: ${data.following}</p>  
+                        <p>Public Repos: ${data.public_repos}</p>  
+                        <a href="${data.html_url}" target="_blank">Profile</a>
+                    `;
+
+                    parent.appendChild(div);
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+    </script>
+</body>
+</html>
